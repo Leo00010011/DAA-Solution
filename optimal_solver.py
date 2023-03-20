@@ -1,4 +1,4 @@
 
 
-def optimal_solver(S :str, T :str) -> int:
+def optimal_solver(S, T) -> int:
     return len(S)
