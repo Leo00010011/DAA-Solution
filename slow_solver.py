@@ -8,9 +8,9 @@ def is_arr_prefix(arr,t):
 
 
 def slow_solver(s,t,print_sol):
-    print("Soluciones del problema para")
-    print('s: ' + s)
-    print('t: ' + t)
+    # print("Soluciones del problema para")
+    # print('s: ' + s)
+    # print('t: ' + t)
     return 2 * slow_solver_aux(s,t,[s[0]],[0],1, print_sol)
 
 def slow_solver_aux(s,t,current_sol : list,choices,index,print_sol):    
@@ -36,5 +36,3 @@ def slow_solver_aux(s,t,current_sol : list,choices,index,print_sol):
     choices.pop()
 
     return count + result_left + result_right
-
-print(slow_solver('abdbaedadb','abda',True))
