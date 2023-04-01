@@ -42,16 +42,12 @@ def tester(cases_count :int, str_lenght :int):
             print(Fore.GREEN + f"S = {S}, T = {T}, Real Value = {real_value}, Actual Value = {actual_value}\n")
             print(Fore.WHITE)
 
-# S = 'nnavtvyfqheibwxbpunw'
-# T = 'newvtpwn'
-
-# print(optimal_solver(S,T))
-
-
+S = 'nlzmjuywamiiotgdzjjg'
+T = 'n'
+print(slow_solver(S,T,False))
+print(optimal_solver(S,T))
 # tester(100,20)
 
 # gen_cases(1000)
 
-list = [{'s':'abcd', 't':'cd', 'result': 1},{'s':'dcba', 't':'sd', 'result':45},{'s':'qwer', 't':'qw', 'result':48}]
-with open('test.txt','w') as f:
-    pickle.dump({'s':'abcd', 't':'cd', 'result': 1},f, protocol=-1)
+

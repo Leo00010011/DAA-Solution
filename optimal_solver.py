@@ -19,7 +19,7 @@ def left_sol(S,T):
     if len(T) == 1:
         result = 0
         for i in range(len(S)):
-            if result[i] == T[0]:
+            if S[i] == T[0]:
                 result += (2**i)*(len(S) - i)
         return result, None
 
@@ -44,7 +44,7 @@ def left_sol(S,T):
 def right_sol(S,T, left_dp):
     if len(T) == 1:
         if T[0] == S[0]:
-            return 1
+            return len(S)
         else:
             return 0
 
@@ -58,9 +58,7 @@ def right_sol(S,T, left_dp):
     if m == -1:
         return 0
     
-    if m == 0:
-        return left_dp[1][len(T) - 2]
-     
+        
     # construir right_dp
     #   construir el caso de tamaño uno
     right_dp = [[]]
@@ -83,7 +81,10 @@ def right_sol(S,T, left_dp):
     result = 0
     for i in range(m,-1,-1):
         if S[i] == T[len(T) - 1]:
-            result += left_dp[i + 1][len(T) - i - 2]*right_dp[i - 2][0]
+            if i == 0:
+                result += left_dp[1][len(T) - 2]
+            else:
+                result += left_dp[i + 1][len(T) - i - 2]*right_dp[i - 2][0]
     return result
 
 

@@ -1,5 +1,5 @@
 def is_arr_prefix(arr,t):
-    if(len(arr) <= len(t)):
+    if(len(arr) < len(t)):
         return False
     for i in range(len(t)):
         if(arr[i] != t[i]):
@@ -36,3 +36,5 @@ def slow_solver_aux(s,t,current_sol : list,choices,index,print_sol):
     choices.pop()
 
     return count + result_left + result_right
+
+print(is_arr_prefix(['n'],'n'))
