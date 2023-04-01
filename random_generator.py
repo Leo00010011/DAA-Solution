@@ -4,7 +4,7 @@ import string
 
 def random_generator(s_len = None, t_len = None):
     if s_len is None:
-        s_len = rd.randint(1,200)
+        s_len = rd.randint(1,25)
     if t_len is None:
         t_len = rd.randint(1,s_len)
         
@@ -14,7 +14,14 @@ def random_generator(s_len = None, t_len = None):
     return S, T
 
 
+def random_right(s_len = None, t_len = None):
+    if s_len is None:
+        s_len = rd.randint(3,25)
+    if t_len is None:
+        t_len = rd.randint(2,s_len)
+    right_len = rd.randint(1,len(t_len))
 
+    s_prefix = rd.shuffle()
 
 # S, T = random_generator(10)
 # print("S =", S)
