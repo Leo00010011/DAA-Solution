@@ -37,4 +37,3 @@ def slow_solver_aux(s,t,current_sol : list,choices,index,print_sol):
 
     return count + result_left + result_right
 
-print(is_arr_prefix(['n'],'n'))

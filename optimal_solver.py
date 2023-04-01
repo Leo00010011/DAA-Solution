@@ -63,18 +63,18 @@ def right_sol(S,T, left_dp):
     #   construir el caso de tamaño uno
     right_dp = [[]]
     for i in range(m):
-        if S[0] == T[i]:
+        if S[0] == T[((len(T) - 1) - m) + i]:
             right_dp[0].append(2)
         else:
             right_dp[0].append(0)
     #   construir el resto de casos
-    for l in range(2,m):
+    for l in range(2,m + 1):
         right_dp.append([])
         for pos in range(m - (l - 1)):
             current = 0
-            if S[l - 1] == T[pos]:
+            if S[l - 1] == T[((len(T) - 1) - m) + pos]:
                 current += right_dp[l -2][pos + 1]
-            if S[l - 1] == T[pos + l - 1]:
+            if S[l - 1] == T[((len(T) - 1) - m) + (pos + (l - 1))]:
                 current += right_dp[l - 2][pos]
             right_dp[l - 1].append(current)
     #acumular las soluciones
@@ -83,14 +83,17 @@ def right_sol(S,T, left_dp):
         if S[i] == T[len(T) - 1]:
             if i == 0:
                 result += left_dp[1][len(T) - 2]
+            elif i == (len(T) - 1):
+                result += right_dp[i - 1][m - i]*(len(S) - len(T) + 1)
             else:
-                result += left_dp[i + 1][len(T) - i - 2]*right_dp[i - 2][0]
+                result += left_dp[i + 1][len(T) - i - 2]*right_dp[i - 1][m - i]
     return result
 
 
 def optimal_solver(S, T) -> int:
     result, left_dp = left_sol(S,T)
-    result += right_sol(S,T,left_dp)
-    return result
+    right = right_sol(S,T,left_dp)
+    result += right
+    return result, right > 0
 
-# temp = left_sol("xaxxaxxsxasxxaxxcaxxcxxx", "casa")
+

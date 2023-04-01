@@ -23,6 +23,4 @@ def random_right(s_len = None, t_len = None):
 
     s_prefix = rd.shuffle()
 
-# S, T = random_generator(10)
-# print("S =", S)
-# print("T =", T)
+
