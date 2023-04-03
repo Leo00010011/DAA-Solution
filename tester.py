@@ -40,7 +40,7 @@ def json_tester(file_path = 'test.txt'):
         print(f'actual value = {actual_value}')
 
         if real_value != actual_value:
-            print(Fore.RED + f"Error: S = {S}, T = {T}, Real Value = {real_value}, Actual Value = {actual_value}")
+            print(Fore.RED + f"Error: S = {S}, T = {T}, Real Value = {real_value}, Actual Value = {actual_value}\n")
             print(Fore.WHITE)
         else:
             print(Fore.GREEN + f"S = {S}, T = {T}, Real Value = {real_value}, Actual Value = {actual_value}\n")
