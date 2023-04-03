@@ -93,7 +93,6 @@ def right_sol(S,T, left_dp):
 def optimal_solver(S, T) -> int:
     result, left_dp = left_sol(S,T)
     right = right_sol(S,T,left_dp)
-    result += right
-    return result, right > 0
+    return result + right, right > 0, result > 0
 
 
