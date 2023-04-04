@@ -81,20 +81,22 @@ def json_tester(file_path = 'test.txt'):
             cant_wrong_right += 1
         print(Fore.RED + f"Error: S = {S}, T = {T}, Real Value = {real_value}, Actual Value = {actual_value}, dcha = {dcha}")
         print(Fore.WHITE)
+
+    print(f'cant_cases: {len(to_save)}')
     print(f'cant_wrong: {len(wrong_answer)}')
-    print(f'cant_right: {cant_dcha}')
-    print(f'cant_wrong_right: {cant_wrong_right}')
-    print(f'cant_wrong_left: {len(wrong_answer) - cant_wrong_right}')
+    print(f'cant_dcha: {cant_dcha}')
+    print(f'cant_wrong_dcha: {cant_wrong_right}')
+    print(f'cant_wrong_izda: {len(wrong_answer) - cant_wrong_right}')
 
     print(f'accuracy: {(len(to_save) - len(wrong_answer))/len(to_save)}')
-    print(f'right_rat: {cant_dcha/len(to_save)}')
-    print(f'left_rat: {cant_izda/len(to_save)}')
-    print(f'only_right_rat: {cant_solo_dcha/len(to_save)}')
-    print(f'only_left_rat: {cant_solo_izda/len(to_save)}')
-    print(f'left_and_right_rat: {cant_izda_dcha/len(to_save)}')
+    print(f'dcha_rat: {cant_dcha/len(to_save)}')
+    print(f'izda_rat: {cant_izda/len(to_save)}')
+    print(f'only_dcha_rat: {cant_solo_dcha/len(to_save)}')
+    print(f'only_izda_rat: {cant_solo_izda/len(to_save)}')
+    print(f'izda_and_dcha_rat: {cant_izda_dcha/len(to_save)}')
     print(f'zero_rat: {cant_zero/len(to_save)}')
 
-    print(f'right_accuracy: {(cant_dcha - cant_wrong_right)/cant_dcha}')
+    print(f'dcha_accuracy: {(cant_dcha - cant_wrong_right)/cant_dcha}')
 
         
     
@@ -138,7 +140,7 @@ def tester(cases_count :int, str_lenght :int):
     print(f'right_rat: {dcha}')
 
 
-
+json_tester('right_tests.txt')
 
 
 

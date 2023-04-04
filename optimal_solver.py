@@ -1,20 +1,3 @@
-
-# def left_sol(S,T):
-#     S_t = S[::-1]
-#     solution = [[0 for j in range(len(T))] for j in range(len(S))]
-
-#     for i in range(len(S)):
-#         for j in range(len(T)):
-#             solution[i][j] = solution[i - 1][j]
-#             if S_t[i] == T[j] and j<= i:
-#                 if j - 1 >= 0: # no es la columna 0
-#                     solution[i][j] += solution[i-1][j-1]
-#                 else:
-#                     solution[i][j] += i + 1 # nada mas se cumple en la 1ra letra de de la cadena T
-#                 if j == len(T) - 1:
-#                     solution[i][j] += - solution[i-1][j-1] + 2^(len(S) - i + 1)*solution[i-1][j-1]
-#     return solution[len(S) - 1][len(T) - 1],solution
-
 def left_sol(S,T):
     if len(T) == 1:
         result = 0

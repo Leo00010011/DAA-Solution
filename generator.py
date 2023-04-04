@@ -12,6 +12,3 @@ def random_generator( n: int):
 
     return S, T
 
-S, T = random_generator(10)
-print("S =", S)
-print("T =", T)

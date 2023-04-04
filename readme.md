@@ -95,12 +95,14 @@ Para la solución de este problema vamos a utilizar la siguiente definición:
 Esta cantidad cumple las siguintes propiedades
 
 * $S$[$s$] $\neq$ $T$[$p$] $\Rightarrow$ left_dp[$s$,$p$] $=$ left_dp[$s + 1$, $p$]
+  
   - **Demostración**: La decision tomada en $s$ tiene que ser derecha, porque en caso contrario para que el inverso de su concatenación con los $p$ restantes sea igual al prefijo de 0 a $p$ de $T$ se debería cumplir que $T$[$p$] $=$ $S$[$s$]
 
 * $S$[$s$] $=$ $T$[$p$] $\Rightarrow$ left_dp[$s$,$p$] $=$ left_dp[$s + 1$, $p$] + $\alpha$
+  
   - **Demostración**: Si se decide derecha con $S$[$s$] se puede y se tiene que poner en el resto cualquiera de las soluciones de $S$[$s + 1$:] con $p + 1$ decisiones izquierdas
   
-  -  $p = 0 \Rightarrow \alpha =$ $|S| - s$
+  - $p = 0 \Rightarrow \alpha =$ $|S| - s$
     
     - **Demostración**: Si se decide izquierda con $S$[$s$], ya se consumió las izquierdas que se pueden poner en las formas de decidir que se están contando con left_dp[$s$,$0$] por lo que el resto solo puede ser uno y las últimas decisiones se puede decidir ponerlas o no
   
@@ -115,6 +117,7 @@ Luego si $S[s] = T[|T| - 1]$ la cantidad de soluciones de esta partición que ti
 Sea una solución en la que al menos una de las primeras $|T|$ letras de $A$ fue puesta con una decisión de derecha, esta solución cumple las siguientes propiedades:
 
 - Sea $S$[$q$] la última letra de $S$ con la que se tomó la decisión derecha y cayó dentro de las primeras $|T|$ letras de $A$.
+  
   - $S$[$q$] ocupa la posición $|T| - 1$ en $A$
     
     - **Demostración**: Todas las letras tomadas con decisiónes derechas van después de las que fueron tomadas con decisiónes izquierdas, y las letras tomadas con decisiones derechas ocurren en $A$ con el mismo orden que ocurren en $S$; luego como esta es la última letra tomada con decisiones derechas de las que caen en las primeras $|T|$ letras de $A$ ,$S$[$q$] tiene que ocupar la posición $|T| - 1$
@@ -128,6 +131,7 @@ Sea una solución en la que al menos una de las primeras $|T|$ letras de $A$ fue
     - **Demostración**: $S$[$q$] fué la última letra con la que se tomó decisión derecha que ocupa una posición en el prefijo de tamaño $|T|$ en $A$ por lo que todas derechas seleccionadas en los índices de mayores que $q$, no caen en el prefijo de tamaño $|T|$. Con lo que está antes de $q$ en $S$ solo se construye el sufijo de tamaño $q + 1$ del prefijo $|T|$. Por lo que necesariamente  ese prefijo de $A$ se tiene que calcular con decisiones izquierdas en las posiciones mayores o iguales a $q + 1$
 
 - Vamos a definir a right_dp[pos,len] como cantidad de formas de decidir para construir el substring(pos,len) de $T$ con el prefijo de tamaño 'len' de $S$
+  
   - La cantidad de soluciones con $S$[$q$] como última letra con la que se tomó desición derecha que cae entre las primeras $|T|$ letras de $A$ son iguales a:
     
     - left_dp[$q + 1$,$|T| - q - 2$ ] * right_dp[$|T| - q - 1$,$q$]
@@ -146,7 +150,7 @@ La complejidad de esta solución es igual a la suma de la complejidad de left_so
 
 El método left_sol consiste en dos casos
 
--  si el prefijo es 1 donde se realiza un for de 0 hasta S por lo que la complejidad es O(n)
+- si el prefijo es 1 donde se realiza un for de 0 hasta S por lo que la complejidad es O(n)
 
 - en el otro caso se realiza un doble for, donde uno realiza n iteraciones y el otro realiza m iteraciones por lo que la complejidad temporal es O(mn)
 
@@ -180,7 +184,7 @@ Al crear S y T se realizó eliminando casos que no iban a tener solución. Ejemp
 
 Esto no quiere decir que se eliminaron los casos donde no haya solución, existen ejemplos de ese estilo, sino que no tenia sentido poner este tipo de ejemplos.
 
-La función "random.choices" de la biblioteca "random" devuelve una lista de caracteres aleatorios tomados del alfabeto en minúscula de la cadena "string.ascii_lowercase". Luego, con el random.choices se crea una cadena con estos caracteres de tamaño k, donde puede repetir elementos.
+Con la función "random.choices" de la biblioteca "random" obtenemos una lista de caracteres aleatorios tomados del alfabeto en minúscula de la cadena "string.ascii_lowercase". 
 
 La cadena T se genera eligiendo aleatoriamente una longitud entre 1 y len(S), y luego seleccionando caracteres aleatorios de la cadena S utilizando la función "random.sample"(no repite elementos).
 
@@ -196,21 +200,57 @@ Se generan los siguientes casos:
 Aqui va el código random_generator.py
 ```
 
-#### Demostración: Genera todos los tipos de casos de prueba
+Como se puede ver de las siguientes estadísticas generadas de las soluciones con los casos de prueba obtenidos con este generador se tiene que 
+
+```console
+SUMARY:
+wrong cases:
+cant_cases: 2982
+cant_wrong: 0
+cant_dcha: 441
+cant_wrong_dcha: 0
+cant_wrong_izda: 0
+accuracy: 1.0
+dcha_rat: 0.14788732394366197
+izda_rat: 0.24916163648558015
+only_dcha_rat: 0.028504359490274984
+only_izda_rat: 0.12977867203219315
+izda_and_dcha_rat: 0.11938296445338699
+zero_rat: 0.7223340040241448
+dcha_accuracy: 1.0
+```
+
+Se puede notar que la probabilidad de que algun caso tenga soluciones contadas por el método right_sol es de un 14 porciento por lo que aún generando 3000 casos solo se están probando 441. Por lo que nos propusimos implemantar un generador de casos también aleatorio para aumentar esta probabilidad. Para esto nos intentamos forzar que se cumpla una condición necesaria para que exista alguna solución de las que cuenta right_sol que es que exista algún carater del prefijo de tamaño |T| de S igual T[|T| - 1] y que todo lo que está detras sea una permutación del sufijo de misma longitud en |T|
+
+```console
+SUMARY:
+wrong cases:
+cant_cases: 961
+cant_wrong: 0
+cant_dcha: 284
+cant_wrong_dcha: 0
+cant_wrong_izda: 0
+accuracy: 1.0
+dcha_rat: 0.29552549427679503
+izda_rat: 0.04890738813735692
+only_dcha_rat: 0.24661810613943808
+only_izda_rat: 0.0
+izda_and_dcha_rat: 0.04890738813735692
+zero_rat: 0.704474505723205
+dcha_accuracy: 1.0
+```
+
+Como se puede notar de esta forma se duplica la probabilidad de que ocurran estos casos
 
 ### Tester:
 
-    En el archivo .py hay 3 formas de analizar los resultados:
+En el archivo .py hay 3 formas de analizar los resultados: 
 
-    1- gen_cases: Recibe la cantidad de casos a generar y los tamaños de las cadenas S y T. Si exite el archivotest.txt, entonces se toman los valores que contiene y se añaden los nuevos que se generaron con su
+1. gen_cases: Recibe la cantidad de casos a generar y los tamaños de las cadenas S y T. Si exite el archivotest.txt, entonces se toman los valores que contiene y se añaden los nuevos que se generaron con su valor real con el método de backtranking
 
-    valor real con el método de backtranking
+2. json_tester: Si el archivo file_path existe se toman los casos generados que contiene y se comparan con el resultado de optimal_solver.
 
-    2- json_tester: Si el archivo file_path existe se toman los casos generados que contiene y se comparan conel resultado de optimal_solver.
-
-    3- tester: Recibe un entero de la cantidad de casos a generar y el tamaño de S.  Crea los valores de S y T
-
-    a traves del método random_generator compara los resultados de los métodos slow_solver y optimal_solver ylos guarda en .txt.
+3. tester: Recibe un entero de la cantidad de casos a generar y el tamaño de S.  Crea los valores de S y T a traves del método random_generator compara los resultados de los métodos slow_solver y optimal_solver y los guarda en .txt.
 
 ```console
 Aqui va el código tester.py
