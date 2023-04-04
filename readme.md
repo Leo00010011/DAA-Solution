@@ -150,7 +150,7 @@ La complejidad temporal de ''right_sol'' es O(nm), ya que también se llena una 
 La complejidad temporal de ''optimal_solver'' es la combinación de los métodos ''left_sol'' y ''right_sol'', y ambos tienen una complejidad temporal de O(nm). Por tanto, por la regla de la suma la complejidad temporal de 
 O(nm).
 
-### Generador de cosos de prueba:
+### Generador de casos de prueba:
 
 El método random_generator encargado de generar los parámetros de entrada S y T para probar el algoritmo.
 Al crear S y T se realizó eliminando casos que no iban a tener solución. Ejemplo, los siguientes casos:
