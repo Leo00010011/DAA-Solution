@@ -31,16 +31,30 @@ Aqui va el código slow_solver.py
 
 
 #### Demostración Correctitud :
-La función ''is_arr_prefix'' comprueba si una cadena es prefijo de otra cadena. La función ''slow_solver'' resuelve el problema para encontrar la cantidad de formas de construir la cadena A a partir de otra cadena S, donde en cada llamado se puede agregar un carácter de S al principio o al final de la cadena actual A, donde al final se obtenga T como prefijo de A.
+La función ''slow_solver'' resuelve el problema para encontrar la cantidad de formas de construir la cadena A con T como prefijo a partir de otra cadena S, donde en cada paso se puede agregar un carácter de S al principio o al final de la cadena actual A, usando backtrack.
+Este fue implementado usando dos llamados recursivos, una para cada opción. Además, se lleva un array ''choices'' de las elecciones que se toman para debugguear.
 
-La función ''slow_solver_aux'' es una función auxiliar recursiva que implementa la idea anterior mediante el uso de backtracking. En cada llamada, se considera si se puede agregar un carácter al principio o al final de la cadena actual A, y se realizan dos llamadas recursivas, una para cada opción. Además, se lleva un array ''choices'' de las elecciones que se toman para formar la solución.
+El estado de cada llamado recursivo está constituido por ''current_sol'', que representa lo que ha ido construyendo hasta ese momento de A y un ''index'' que es el índice de S que toca decidir en ese estado E. La cantidad de soluciones en el estado E es igual a la cantidad de soluciones poniendo el caracter de S a la izquierda de A más la cantidad de soluciones poniendo el caracter de S a la derecha de A, es decir:
 
-En cada llamada recursiva, se comprueba si la cadena actual A tiene como prefijo a la cadena T. Si es así, se cuenta como una solución válida y se devuelve el valor 1. En caso contrario, se continúa la búsqueda.
+Sea F, la función definida como la cantidad de cadenas que se pueden formar partiendo de ''current_sol'' cuyo prefijo sea T y se contruya a partir de una posición ''index'' de S en adelante, se cumple que :
+
+```console
+F(current_sol, index) = alpha + F(current_sol + S[index], index+1) + F(S[index] + current_sol, index+1)
+```
+donde $\alpha$ es 1 si en ese estado encontró una solución válida y 0 en caso contrario. La existencia de $\alpha$ se debe a no es obligado formar la cadena A con todos los caracteres de S.
+
+Demostración: Todas las soluciones se pueden agrupar en 3 conjuntos de soluciones: 
+Caso 1: quedarme donde está
+Caso 2: poner el caracter de S a la izquierda de A
+Caso 3: poner el caracter de S a la derecha de A.
+
+La cantidad de soluciones del caso 1 es igual a $\alpha$ ya que hay una solución válida si tengo el prefijo T($\alpha$ = 1) y no la hay ne caso contrario($\alpha$ = 0).
+
+Los 3 conjuntos representan 3 particiones de A, ya que cada uno contiene una decisión distinta que se tomó.
 
 El valor de retorno de la función ''slow_solver'' es el doble de la cantidad de soluciones encontradas por la función auxiliar ''slow_solver_aux'' porque se esta analizando cuando el primer caracter de S se pone a la derecha o a la izquieda. En cualquiera de los 2 casos, el primer movimiento es equivalente para ambas soluciones.
 
 Por lo tanto, la correctitud del código se basa en la idea de que se consideran todas las posibles combinaciones de caracteres y se cuenta la cantidad de soluciones válidas.
-
 
 
 #### Demostración Complejidad Temporal :
@@ -50,8 +64,6 @@ La complejidad temporal de la función ''is_arr_prefix'' es O(m), donde m = len(
 La complejidad temporal de la función ''slow_solver_aux'' es de O(2^n), donde n = len(S), ya que en cada llamada recursiva se realizan dos llamadas recursivas adicionales, lo que lleva a un árbol de recursión binario con una profundidad máxima n. Además, se realiza una llamada a ''is_arr_prefix'' en cada llamada recursiva, lo que contribuye a la complejidad total.
 
 La complejidad temporal de la función slow_solver es O(2^n), ya que llama a ''slow_solver_aux'' y realiza algunas operaciones adicionales que no afectan significativamente la complejidad temporal total.
-
-
 
 ### Segunda solución ... esta si es óptima:
 
@@ -76,8 +88,25 @@ O(nm).
 
 ### Generador de cosos de prueba:
 
-El método random_generator encargado de generar los parámetros de entrada S y T para probar el algoritmo. El método built-in string.ascii_lowercase devuelve una cadena del abecedario en minúscula. Luego, con el random.choices se crea random una cadena con estos caracteres de tamaño k, donde puede repetir elementos.
-Para generar T se toma como máximo el tamaño de S y con random.sample crea otra con la misma frecuencia con la que aparecen los elementos de S. 
+El método random_generator encargado de generar los parámetros de entrada S y T para probar el algoritmo.
+Al crear S y T se realizó eliminando casos que no iban a tener solución. Ejemplo, los siguientes casos:
+1- Cuando el len(T) > S.
+2- Cuando en T existen caracteres que no están en S.
+3- Cuando en T hay caracteres de S, pero estan repetidos en T más de las veces que están repetidos en S.
+4- Cuando T está vacío
+5- Cuando una cadena que es igual a S pero con los caracteres en un orden diferente. 
+
+Esto no quiere decir que se eliminaron los casos donde no haya solución, existen ejemplos de ese estilo, sino que no tenia sentido poner este tipo de ejemplos.
+
+La función "random.choices" de la biblioteca "random" devuelve una lista de caracteres aleatorios tomados del alfabeto en minúscula de la cadena "string.ascii_lowercase". Luego, con el random.choices se crea una cadena con estos caracteres de tamaño k, donde puede repetir elementos. 
+La cadena T se genera eligiendo aleatoriamente una longitud entre 1 y len(S), y luego seleccionando caracteres aleatorios de la cadena S utilizando la función "random.sample"(no repite elementos). 
+
+Se generan los siguientes casos:
+```console
+1- len(T) = len(S)
+2- len(T) < len(S)
+```
+
 
 ```console
 Aqui va el código random_generator.py
