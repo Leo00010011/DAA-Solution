@@ -30,15 +30,11 @@ Aqui va el código slow_solver.py
 
 La función ''slow_solver'' resuelve el problema para encontrar la cantidad de formas de construir la cadena A con T como prefijo a partir de otra cadena S, donde en cada paso se puede agregar un carácter de S al principio o al final de la cadena actual A, apoyándose en el método auxiliar ''slow_solver_aux''.
 
-La función "slow_solver_aux" es una función recursiva que utiliza la técnica de backtracking para encontrar todas las soluciones posibles. La función mantiene una solución parcial "current_sol" que representa lo que ha ido construyendo paso a paso hasta ese momento de A, una lista de opciones "choices" que indica las decisiones tomadas en cada paso(para debugguear), y un índice "index" que indica el siguiente carácter de s que se considerará.
+La función "slow_solver_aux" es una función recursiva que utiliza la técnica de backtracking para encontrar todas las soluciones posibles. La función mantiene una solución parcial "current_sol" que representa lo que ha ido construyendo paso a paso hasta ese momento de A, una lista de opciones "choices" que indica las decisiones tomadas en cada paso(para debugguear), y un índice "index" indica el caracter donde toca decidir.
 
-Este fue implementado usando dos llamados recursivos, una para cada opción: poner el caracter de S a la derecha o a la izquierda de 'current_sol'.
+Este fue implementado usando dos llamados recursivos, una para cada opción: poner el caracter $S$[index] a la derecha o a la izquierda de 'current_sol' y comprobandese si con lo que se tiene construido hasta ese instante ya es solución pues siempre se puede decidir parar de poner letras
 
-En cada llamado recursivo, la función verifica si la cadena A, solución parcial actual, tiene como prefijo a T. Si es así, la función aumenta el contador de soluciones "count". Luego, la función realiza una llamada recursiva para el siguiente carácter de S, primero insertando el carácter a la izquierda de "current_sol" y luego a la derecha.
-
-Finalmente, la función devuelve la suma de los contadores de soluciones de los llamados recursivos poniendo el caracter de S a la izquierda de A y poniendo el caracter de S a la derecha de A, más el contador actual.
-
-Sea F, la función definida como la cantidad de cadenas que se pueden formar partiendo de ''current_sol'' cuyo prefijo sea T y se contruya a partir de una posición ''index'' de S en adelante, se cumple que :
+Sea F, la función definida como la cantidad de cadenas con prefijo T  se pueden formar partiendo de ''current_sol'' y decidiendo a partir de una posición ''index''  en adelante, se cumple que :
 
 ```console
 F(current_sol, index) = alpha + F(current_sol + S[index], index+1) + F(S[index] + current_sol, index+1)
@@ -46,7 +42,7 @@ F(current_sol, index) = alpha + F(current_sol + S[index], index+1) + F(S[index] 
 
 donde $\alpha$ es 1 si en ese estado encontró una solución válida y 0 en caso contrario. La existencia de $\alpha$ se debe a no es obligado formar la cadena A con todos los caracteres de S.
 
-**Demostración**: Todas las soluciones se pueden agrupar en 3 conjuntos de soluciones:
+**Demostración**: Todas las soluciones que se cuentan en F[current_sol,index] se pueden agrupar en 3 conjuntos de soluciones:
 
 Caso 1: quedarme donde está
 
@@ -54,11 +50,11 @@ Caso 2: poner el caracter de S a la izquierda de A
 
 Caso 3: poner el caracter de S a la derecha de A.
 
-Los 3 conjuntos representan 3 particiones de A, ya que cada uno contiene una decisión distinta que se tomó. La cantidad de soluciones del caso 1 es igual a $\alpha$ ya que hay una solución válida si tengo el prefijo T($\alpha$ = 1) y no la hay ne caso contrario($\alpha$ = 0).
+Los 3 conjuntos representan 3 particiones de A, ya que cada uno contiene una decisión distinta que se tomó con S[index].  Si se toma la primera decisión entonces hay $\alpha$ soluciones pues en caso de que ya esté constituido el prefijo esta partición tiene una solución válida y en caso contrario no tiene ninguna. Si se decide poner S[index] a la izquierda entonces hay F[S[index]  + current_sol,index + 1] soluciones por definición de F y lo mismo para el término restante y si se decide derecha
 
-El valor de retorno de la función ''slow_solver'' es el doble de la cantidad de soluciones encontradas por la función auxiliar ''slow_solver_aux'' porque se esta analizando cuando el primer caracter de S se pone a la derecha o a la izquieda. En cualquiera de los 2 casos, el primer movimiento es equivalente para ambas soluciones.
+El valor de retorno de la función ''slow_solver'' es el doble de la cantidad de soluciones encontradas por la función auxiliar ''slow_solver_aux'' cuando se llama con current_sol igual al primer caracter de 'S' pues esa decisión puede ser tanto izquierda como derecha que el efecto va a ser el mismo. 
 
-El algoritmo termina al recorrer completo la cadena S, que es finita. Además, encuentra todas las posibles soluciones y las retorna ya que evalúa todas las posibles combinaciones de caracteres de S, y cada carácter se considera en cada llamado recursivo.
+El algoritmo pues la terminación de ese llamado depende de la terminación de dos llamados recursivos que se hacen con un índice mayor por lo que eventualmente van a llegar al caso base que es con index = |S|. Además, encuentra todas las posibles soluciones y las retorna ya que evalúa todas las posibles decisiónes de para caracteres de S.
 
 Por lo tanto, la correctitud del código se basa en la idea de que se consideran todas las posibles combinaciones de caracteres y se cuenta la cantidad de soluciones válidas.
 
@@ -66,9 +62,7 @@ Por lo tanto, la correctitud del código se basa en la idea de que se consideran
 
 La complejidad temporal de la función ''is_arr_prefix'' es O(m), donde m = len(T), ya que se compara cada carácter de la cadena ''arr'' con la cadena T hasta que se encuentra un carácter diferente o se alcanza el final de T.
 
-La complejidad temporal de la función ''slow_solver_aux'' es de O(2^n), donde n = len(S), ya que en cada llamada recursiva se realizan dos llamadas recursivas adicionales, lo que lleva a un árbol de recursión binario con una profundidad máxima n. Además, se realiza una llamada a ''is_arr_prefix'' en cada llamada recursiva, lo que contribuye a la complejidad total.
-
-La complejidad temporal de la función slow_solver es O(2^n), ya que llama a ''slow_solver_aux'' y realiza algunas operaciones adicionales que no afectan significativamente la complejidad temporal total.
+La complejidad temporal de la función ''slow_solver_aux'' es de O($m2^n$), donde n = len(S), ya que en cada llamada recursiva se realizan dos llamadas recursivas adicionales, lo que lleva a un árbol de recursión binario con una profundidad máxima n y en cada llamado recursivo se llama is_arr_prefix. Además, se realiza una llamada a ''is_arr_prefix'' en cada llamada recursiva, lo que contribuye a la complejidad total.
 
 ### SegunDAA solución ... esta si es óptima:
 
@@ -101,20 +95,18 @@ Para la solución de este problema vamos a utilizar la siguiente definición:
 Esta cantidad cumple las siguintes propiedades
 
 * $S$[$s$] $\neq$ $T$[$p$] $\Rightarrow$ left_dp[$s$,$p$] $=$ left_dp[$s + 1$, $p$]
-
-  - **Demostración**: La decision tomada en $s$ tiene que ser derecha, porque en caso contrario para que el inverso de su concatenación con los $p$ restantes sea igual al prefijo de 0 a $p$ de $T$ se debería cumplir que $T$[$p$] $=$ $S$[$s$]
+  - **Demostración**: La decision tomada en $s$ tiene que ser derecha, porque en caso contrario para que el inverso de su concatenación con los $p$ restantes sea igual al prefijo de 0 a $p$ de $T$ se debería cumplir que $T$[$p$] $=$ $S$[$s$]
 
 * $S$[$s$] $=$ $T$[$p$] $\Rightarrow$ left_dp[$s$,$p$] $=$ left_dp[$s + 1$, $p$] + $\alpha$
-
-  - **Demostración**: Si se decide derecha con $S$[$s$] se puede y se tiene que poner en el resto cualquiera de las soluciones de $S$[$s + 1$:] con $p + 1$ decisiones izquierdas
-
-  - $p = 0 \Rightarrow \alpha =$ $|S| - s$
-
-    - **Demostración**: Si se decide izquierda con $S$[$s$], ya se consumió las izquierdas que se pueden poner en las formas de decidir que se están contando con left_dp[$s$,$0$] por lo que el resto solo puede ser uno y las últimas decisiones se puede decidir ponerlas o no
-
-  - $e.o.c \Rightarrow $ $\alpha = $ left_dp[$s + 1$,$p -1$]
-
-    - **Demostración**: Si se decide izquierda con $S$[$s$], faltan por consumir $p$ decisiones izquierdas con $S$[$s + 1$:] y esta es exactamente la cantidad que se calcula con left_dp[$s + 1$,$p - 1$]
+  - **Demostración**: Si se decide derecha con $S$[$s$] se puede y se tiene que poner en el resto cualquiera de las soluciones de $S$[$s + 1$:] con $p + 1$ decisiones izquierdas
+  
+  -  $p = 0 \Rightarrow \alpha =$ $|S| - s$
+    
+    - **Demostración**: Si se decide izquierda con $S$[$s$], ya se consumió las izquierdas que se pueden poner en las formas de decidir que se están contando con left_dp[$s$,$0$] por lo que el resto solo puede ser uno y las últimas decisiones se puede decidir ponerlas o no
+  
+  - $e.o.c \Rightarrow $ $\alpha = $ left_dp[$s + 1$,$p -1$]
+    
+    - **Demostración**: Si se decide izquierda con $S$[$s$], faltan por consumir $p$ decisiones izquierdas con $S$[$s + 1$:] y esta es exactamente la cantidad que se calcula con left_dp[$s + 1$,$p - 1$]
 
 Luego si $S[s] = T[|T| - 1]$ la cantidad de soluciones de esta partición que tienen a $S[s]$ en la posición $|T| - 1$ de $A$ es igual a $2^s$left_dp[$s + 1$,$p - 1$],pues, al escoger a $S[s]$ como primera de los $|T|$ últimas decisiones izquierdas, las $s$ primeras decisiones no afectan el prefijo por lo que pueden ser cualquiera de las $2^s$ posibles formas y las decisiones desde $s + 1$ en adelante tienen que formar el prefijo de $0$ a $p -1$ las cuales son left_dp[$s + 1$,$p - 1$]. Luego la cantidad de soluciones de esta partición se puede calcular acumulando este valor para toda  $s$ que cumpla $S[s] = T[|T| - 1]$, y esta se puede calcular usando un enfoque de programación dinámica recorriendo $S$ de atrás para alante y actualizando los valores de left_dp[$s$,$p$] para todo $p$ de $0$ a $|T|$ y acumulando en la posición left_dp[$s$,$|T| - 1$] las soluciónes tal que $s$ sea la primera de las $|T|$ últimas izquierdas
 
@@ -123,42 +115,52 @@ Luego si $S[s] = T[|T| - 1]$ la cantidad de soluciones de esta partición que ti
 Sea una solución en la que al menos una de las primeras $|T|$ letras de $A$ fue puesta con una decisión de derecha, esta solución cumple las siguientes propiedades:
 
 - Sea $S$[$q$] la última letra de $S$ con la que se tomó la decisión derecha y cayó dentro de las primeras $|T|$ letras de $A$.
-
-  - $S$[$q$] ocupa la posición $|T| - 1$ en $A$
-
-    - **Demostración**: Todas las letras tomadas con decisiónes derechas van después de las que fueron tomadas con decisiónes izquierdas, y las letras tomadas con decisiones derechas ocurren en $A$ con el mismo orden que ocurren en $S$; luego como esta es la última letra tomada con decisiones derechas de las que caen en las primeras $|T|$ letras de $A$ ,$S$[$q$] tiene que ocupar la posición $|T| - 1$
-
-  - Con el prefijo hasta el índice $q$ de $S$ se decide el sufijo de tamaño $q + 1$ del prefijo de tamaño $|T|$ en $A$
-
-    - **Demostración**: Al poner una letra con una decisión derecha todo lo que fue decidido en las letras anteriores a ella van a estar contiguos a ella y antes de ella. Como $S$[$q$] ocupa la posición $|T| - 1$ de $A$ antonces las $q$ letras anteriores tienen que ocupar las $q$ posiciones anteriores del prefijo
-
-  - El prefijo en $A$ hasta el índice $|T| - q - 2$ es calculado solo con izquierdas con $S$[$q + 1$:]
-
-    - **Demostración**: $S$[$q$] fué la última letra con la que se tomó decisión derecha que ocupa una posición en el prefijo de tamaño $|T|$ en $A$ por lo que todas derechas seleccionadas en los índices de mayores que $q$, no caen en el prefijo de tamaño $|T|$. Con lo que está antes de $q$ en $S$ solo se construye el sufijo de tamaño $q + 1$ del prefijo $|T|$. Por lo que necesariamente  ese prefijo de $A$ se tiene que calcular con decisiones izquierdas en las posiciones mayores o iguales a $q + 1$
+  - $S$[$q$] ocupa la posición $|T| - 1$ en $A$
+    
+    - **Demostración**: Todas las letras tomadas con decisiónes derechas van después de las que fueron tomadas con decisiónes izquierdas, y las letras tomadas con decisiones derechas ocurren en $A$ con el mismo orden que ocurren en $S$; luego como esta es la última letra tomada con decisiones derechas de las que caen en las primeras $|T|$ letras de $A$ ,$S$[$q$] tiene que ocupar la posición $|T| - 1$
+  
+  - Con el prefijo hasta el índice $q$ de $S$ se decide el sufijo de tamaño $q + 1$ del prefijo de tamaño $|T|$ en $A$
+    
+    - **Demostración**: Al poner una letra con una decisión derecha todo lo que fue decidido en las letras anteriores a ella van a estar contiguos a ella y antes de ella. Como $S$[$q$] ocupa la posición $|T| - 1$ de $A$ antonces las $q$ letras anteriores tienen que ocupar las $q$ posiciones anteriores del prefijo
+  
+  - El prefijo en $A$ hasta el índice $|T| - q - 2$ es calculado solo con izquierdas con $S$[$q + 1$:]
+    
+    - **Demostración**: $S$[$q$] fué la última letra con la que se tomó decisión derecha que ocupa una posición en el prefijo de tamaño $|T|$ en $A$ por lo que todas derechas seleccionadas en los índices de mayores que $q$, no caen en el prefijo de tamaño $|T|$. Con lo que está antes de $q$ en $S$ solo se construye el sufijo de tamaño $q + 1$ del prefijo $|T|$. Por lo que necesariamente  ese prefijo de $A$ se tiene que calcular con decisiones izquierdas en las posiciones mayores o iguales a $q + 1$
 
 - Vamos a definir a right_dp[pos,len] como cantidad de formas de decidir para construir el substring(pos,len) de $T$ con el prefijo de tamaño 'len' de $S$
-
-  - La cantidad de soluciones con $S$[$q$] como última letra con la que se tomó desición derecha que cae entre las primeras $|T|$ letras de $A$ son iguales a:
-
-    - left_dp[$q + 1$,$|T| - q - 2$ ] * right_dp[$|T| - q - 1$,$q$]
-
-    - **Demostración**: Como ya se dijo anteriormente si se escogió a $S$[$q$] como última letra con la que se tomó desición derecha que cae entre las primeras |T| letras de A entonces el sufijo de tamaño $q + 1$ se resuelve con el prefijo de tamaño $q + 1$ de $S$ pero ya se sabe que $S$[$q$] tomó derecha por lo que queda por decidir solo el prefijo de tamaño $q$ para resolver el substring de tamaño $q$ desde la posición $|T| - q - 1$ de $A$, la cantidad de formas de hacer esto es right_dp[$|T| - q - 1$,$q$] por definición. Luego como ya se dijo anteriormente el prefijo hasta la posición $|T| - q - 2$ de $A$ se calcula solo con izquierdas de $S$[$q + 1$:] por lo que las decisiones pueden y deben ser las que cumplen la condición para contar en left_dp[$q + 1$,|$T| - q - 2$ ]. Luego todas las soluciónes que queremos contar tiene unos primeros $|T| - q - 1$ que pueden ser cualquiera de los contados en left_dp[$q + 1$,$|T| - q - 2$] y el  resto del prefijo $T$ que puede ser cualquiera de los right_dp[$|T| - q - 1$,$q$] por lo que por principio de multiplicación la cantidad es igual a la formula planteada
-
-  - right_dp[pos,len] = right_dp[pos, len - 1] + right_dp[pos + 1, len - 1]
-
-    - **Demostración**: Supongamos que se tiene que construir con el prefijo de tamaño 'len' de $S$ el substring(pos,len) de $T$, si analizan las decisiones de atrás para alante y se toma una decisión derecha con la última letra esta va a caer en la última posición del substring a construir (todas las derechas van después que las izquierdas y mantienen el orden donde se ponen) por lo que quedaría por decidir el substring(pos,len - 1) de $A$ con el prefijo del tamaño len - 1 de $S$  lo cual tiene right_dp[pos, len - 1] formas de hacerse por definición, con la misma lógica se puede llegar a que si se toma la decisión izquierda con la última letra se tienen right_dp[pos + 1, len - 1]
+  - La cantidad de soluciones con $S$[$q$] como última letra con la que se tomó desición derecha que cae entre las primeras $|T|$ letras de $A$ son iguales a:
+    
+    - left_dp[$q + 1$,$|T| - q - 2$ ] * right_dp[$|T| - q - 1$,$q$]
+    
+    - **Demostración**: Como ya se dijo anteriormente si se escogió a $S$[$q$] como última letra con la que se tomó desición derecha que cae entre las primeras |T| letras de A entonces el sufijo de tamaño $q + 1$ se resuelve con el prefijo de tamaño $q + 1$ de $S$ pero ya se sabe que $S$[$q$] tomó derecha por lo que queda por decidir solo el prefijo de tamaño $q$ para resolver el substring de tamaño $q$ desde la posición $|T| - q - 1$ de $A$, la cantidad de formas de hacer esto es right_dp[$|T| - q - 1$,$q$] por definición. Luego como ya se dijo anteriormente el prefijo hasta la posición $|T| - q - 2$ de $A$ se calcula solo con izquierdas de $S$[$q + 1$:] por lo que las decisiones pueden y deben ser las que cumplen la condición para contar en left_dp[$q + 1$,|$T| - q - 2$ ]. Luego todas las soluciónes que queremos contar tiene unos primeros $|T| - q - 1$ que pueden ser cualquiera de los contados en left_dp[$q + 1$,$|T| - q - 2$] y el  resto del prefijo $T$ que puede ser cualquiera de los right_dp[$|T| - q - 1$,$q$] por lo que por principio de multiplicación la cantidad es igual a la formula planteada
+  
+  - right_dp[pos,len] = right_dp[pos, len - 1] + right_dp[pos + 1, len - 1]
+    
+    - **Demostración**: Supongamos que se tiene que construir con el prefijo de tamaño 'len' de $S$ el substring(pos,len) de $T$, si analizan las decisiones de atrás para alante y se toma una decisión derecha con la última letra esta va a caer en la última posición del substring a construir (todas las derechas van después que las izquierdas y mantienen el orden donde se ponen) por lo que quedaría por decidir el substring(pos,len - 1) de $A$ con el prefijo del tamaño len - 1 de $S$  lo cual tiene right_dp[pos, len - 1] formas de hacerse por definición, con la misma lógica se puede llegar a que si se toma la decisión izquierda con la última letra se tienen right_dp[pos + 1, len - 1]
 
 Los valores de right_dp se pueden ir resolviendo calculando los casos para len = 1 e ir creciendo hasta len igual $|T|$ pues todos los casos, excepto el de len = 1 que es 2 si $S$[len] $=$ $T$[pos] y $0$ en otro caso, dependen del casos con su len - 1
 
 #### Demostración Complejidad Temporal :
 
-Para demostrar la complejidad temporal del código, primero se debe analizar la complejidad temporal de ''left_sol''. La matriz de programación dinámica tiene O(nm) elementos, y se debe llenar cada uno de ellos. Por lo tanto, la complejidad temporal de ''left_sol'' es O(nm).
+La complejidad de esta solución es igual a la suma de la complejidad de left_sol y right_sol. Sea n igual a |S| y m igual |T|
 
-La complejidad temporal de ''right_sol'' es O(nm), ya que también se llena una matriz de programación dinámica con O(nm) elementos.
+El método left_sol consiste en dos casos
 
-La complejidad temporal de ''optimal_solver'' es la combinación de los métodos ''left_sol'' y ''right_sol'', y ambos tienen una complejidad temporal de O(nm). Por tanto, por la regla de la suma la complejidad temporal de
+-  si el prefijo es 1 donde se realiza un for de 0 hasta S por lo que la complejidad es O(n)
 
-O(nm).
+- en el otro caso se realiza un doble for, donde uno realiza n iteraciones y el otro realiza m iteraciones por lo que la complejidad temporal es O(mn)
+
+Luego como la complejidad de un método cuando se tienen varios casos es igual al máximo de las complejidades de cada uno de los casos, la complejidad de left_sol es O(mn)
+
+El método right_sol consiste en dos casos:
+
+- uno cuando |T| = 1 el cual se resuelve en O(1)
+
+- en los otros casos se tienen cuatro ciclos, 3 de ellos con m iteraciones en el peor caso y el otro con un doble for ambos con m casos en el peor caso. Como la complejidad de la suma es la complejidad del máximo la complejidad de este caso es O(m$^2$)
+
+Como la complejidad cuando se tienen varios casos es el máximo de las complejidades el método right_sol tiene complejidad O(m$^2$)
+
+Como el método óptimal solver consiste en llamar right_sol y left_sol y la complejidad de la suma es igual al maximo de las complejidades de sus términos entonces tiene complejidad O(mn)
 
 ### Generador de cosos de prueba:
 
