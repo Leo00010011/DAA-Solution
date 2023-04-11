@@ -22,15 +22,49 @@ EL objetivo del (divertidísimo) juego es encontrar la cantidad de cadenas posib
 
 Backtraking
 
-```console
-Aqui va el código slow_solver.py
+```python
+def is_arr_prefix(arr,t):
+    if(len(arr) < len(t)):
+        return False
+    for i in range(len(t)):
+        if(arr[i] != t[i]):
+            return False
+    return True
+
+
+def slow_solver(s,t,print_sol):
+    return 2 * slow_solver_aux(s,t,[s[0]],[0],1, print_sol)
+
+def slow_solver_aux(s,t,current_sol,choices,index,print_sol):    
+    count = 0
+    if is_arr_prefix(current_sol,t):
+        if print_sol:
+            print(''.join(current_sol) + ':' + str(choices))
+        count = 1
+
+    if(index == len(s)):
+        return count
+
+    current_sol.insert(0,s[index])
+    choices.append(0)
+    result_left =  slow_solver_aux(s,t,current_sol,choices,index + 1,print_sol)
+    current_sol.pop(0)
+    choices.pop()
+
+    current_sol.append(s[index])
+    choices.append(1)
+    result_right = slow_solver_aux(s,t,current_sol,choices,index + 1,print_sol)
+    current_sol.pop()
+    choices.pop()
+
+    return count + result_left + result_right
 ```
 
 #### Demostración Correctitud :
 
 La función ''slow_solver'' resuelve el problema para encontrar la cantidad de formas de construir la cadena A con T como prefijo a partir de otra cadena S, donde en cada paso se puede agregar un carácter de S al principio o al final de la cadena actual A, apoyándose en el método auxiliar ''slow_solver_aux''.
 
-La función "slow_solver_aux" es una función recursiva que utiliza la técnica de backtracking para encontrar todas las soluciones posibles. La función mantiene una solución parcial "current_sol" que representa lo que ha ido construyendo paso a paso hasta ese momento de A, una lista de opciones "choices" que indica las decisiones tomadas en cada paso(para debugguear), y un índice "index" indica el caracter donde toca decidir.
+La función "slow_solver_aux" es una función recursiva que utiliza la técnica de backtracking para encontrar todas las soluciones posibles. La función mantiene una solución parcial "current_sol" que representa lo que ha ido construyendo paso a paso hasta ese momento de A, una lista de opciones "choices" que indica las decisiones tomadas en cada paso(para debugguear), y un índice "index" indica el caracter donde toca decidir en el llamado recursivo actual.
 
 Este fue implementado usando dos llamados recursivos, una para cada opción: poner el caracter $S$[index] a la derecha o a la izquierda de 'current_sol' y comprobandese si con lo que se tiene construido hasta ese instante ya es solución pues siempre se puede decidir parar de poner letras
 
@@ -40,7 +74,7 @@ Sea F, la función definida como la cantidad de cadenas con prefijo T  se pueden
 F(current_sol, index) = alpha + F(current_sol + S[index], index+1) + F(S[index] + current_sol, index+1)
 ```
 
-donde $\alpha$ es 1 si en ese estado encontró una solución válida y 0 en caso contrario. La existencia de $\alpha$ se debe a no es obligado formar la cadena A con todos los caracteres de S.
+donde $\alpha$ es 1 si current_sol es una solución válida y 0 en caso contrario. La existencia de $\alpha$ se debe a no es obligado formar la cadena A con todos los caracteres de S.
 
 **Demostración**: Todas las soluciones que se cuentan en F[current_sol,index] se pueden agrupar en 3 conjuntos de soluciones:
 
@@ -50,24 +84,121 @@ Caso 2: poner el caracter de S a la izquierda de A
 
 Caso 3: poner el caracter de S a la derecha de A.
 
-Los 3 conjuntos representan 3 particiones de A, ya que cada uno contiene una decisión distinta que se tomó con S[index].  Si se toma la primera decisión entonces hay $\alpha$ soluciones pues en caso de que ya esté constituido el prefijo esta partición tiene una solución válida y en caso contrario no tiene ninguna. Si se decide poner S[index] a la izquierda entonces hay F[S[index]  + current_sol,index + 1] soluciones por definición de F y lo mismo para el término restante y si se decide derecha
+Los 3 conjuntos representan 3 particiones de las soluciones que se pueden construir a partir de ese momento, pues representan cada una de las decisiones distintas que se pueden tomar con S[index].  Si se toma la primera decisión entonces hay $\alpha$ soluciones pues en caso de que ya esté constituido el prefijo esta partición tiene una solución válida y en caso contrario no tiene ninguna. Si se decide poner S[index] a la izquierda entonces hay F[S[index]  + current_sol,index + 1] soluciones por definición de F y lo mismo para el término restante y si se decide derecha
 
-El valor de retorno de la función ''slow_solver'' es el doble de la cantidad de soluciones encontradas por la función auxiliar ''slow_solver_aux'' cuando se llama con current_sol igual al primer caracter de 'S' pues esa decisión puede ser tanto izquierda como derecha que el efecto va a ser el mismo. 
+Por eficiencia solo se calculan las soluciones habiendo decidido derecha para la primera letra, pues al ser el current_sol el mismo para ambas decisiónes las cantidades van a ser las mismas por lo que se calcula partiendo de haber decidido derecha y se duplica que resultado.
 
-El algoritmo pues la terminación de ese llamado depende de la terminación de dos llamados recursivos que se hacen con un índice mayor por lo que eventualmente van a llegar al caso base que es con index = |S|. Además, encuentra todas las posibles soluciones y las retorna ya que evalúa todas las posibles decisiónes de para caracteres de S.
+El algoritmo termina, pues ese llamado solo depende de la terminación de dos llamados recursivos, que se hacen con un índice mayor que el actual por lo que eventualmente van a llegar al caso base que es con index = |S|. Además, encuentra todas las posibles soluciones y las retorna ya que evalúa todas las posibles decisiónes de para caracteres de S.
 
 Por lo tanto, la correctitud del código se basa en la idea de que se consideran todas las posibles combinaciones de caracteres y se cuenta la cantidad de soluciones válidas.
 
 #### Demostración Complejidad Temporal :
 
-La complejidad temporal de la función ''is_arr_prefix'' es O(m), donde m = len(T), ya que se compara cada carácter de la cadena ''arr'' con la cadena T hasta que se encuentra un carácter diferente o se alcanza el final de T.
+ Sea n = |S| y m = |T|, es evidente que la complejidad de "slow_solver" es igual a la complejidad de "slow_solver_aux". Luego sea $g(m)$ la función que describe el tiempo de ejecución de "is_arr_prefix" y sea $f(n,m)$ la función que describe el tiempo de ejecución de slow_solver_aux. Es evidente que $f(1,m) = g(m) + c$  y que para  $n > 0$ se cumple que:
 
-La complejidad temporal de la función ''slow_solver_aux'' es de O($m2^n$), donde n = len(S), ya que en cada llamada recursiva se realizan dos llamadas recursivas adicionales, lo que lleva a un árbol de recursión binario con una profundidad máxima n y en cada llamado recursivo se llama is_arr_prefix. Además, se realiza una llamada a ''is_arr_prefix'' en cada llamada recursiva, lo que contribuye a la complejidad total.
+$$
+f(n,m) = g(m) + 2f(n - 1,m) 
+$$
+
+Partiendo de esto se puede demostrar facilmente con inducción en $n$ que:
+
+$$
+f(n,m) = (2^n - 1)g(m) + c2^{n - 1}
+$$
+
+Es evidente que $g(n,m) = O(m)$ por lo que:
+
+$$
+f(n,m) = O(m2^n) - O(m) + O(2^n) = O(m2^n)
+$$
 
 ### SegunDAA solución ... esta si es óptima:
 
-```console
-Aqui va el código optimal_solver.py
+```python
+def left_sol(S,T):
+    # Caso del prefijo con tamaño 1, por cada letra que sea igual al prefijo
+    # decidir cualqueir cosa antes, poner la letra, y después solo 1
+    if len(T) == 1:
+        result = 0
+        for i in range(len(S)):
+            if S[i] == T[0]:
+                result += (2**i)*(len(S) - i)
+        return result, None
+    
+    # array auxiliar pa no poner el if para la primera iteración
+    result = [[0]*len(T)]
+    # resolviendo de cuantas formas se puede construir el prefijo hasta
+    # el índice j de T con las letras del sufijo de S hasta el índice i
+    for i in range(len(S) - 1, -1,-1):
+        result.insert(0,[])
+        for j in range(len(T)):
+            if T[j] != S[i]:
+                result[0].append(result[1][j])
+            else:
+                if j == 0:
+                    result[0].append(result[1][j] + (len(S) - i))
+                elif j == (len(T) - 1):
+                    result[0].append(result[1][j] + result[1][j - 1] * (2**i))
+                else:
+                    result[0].append(result[1][j] + result[1][j - 1])
+    result.pop(len(S))
+    return result[0][len(T) - 1], result
+
+
+
+def right_sol(S,T, left_dp):
+    # si el prefijo es de tamaño uno entonces la única solución con derecha
+    # posible es todos derecha y para que esto sea válido el primero de S
+    # tiene que ser igual al primero de T
+    if len(T) == 1:
+        if T[0] == S[0]:
+            return len(S)
+        else:
+            return 0
+    # buscando la última letra entre los primeros |T| de S que puede ser
+    # una última derecha dentro del prefijo T de A 
+    m = -1
+    for i in range(len(T) - 1, -1 , -1):
+        if S[i] == T[len(T) - 1]:
+            m = i
+            break
+    if m == -1:
+        return 0
+    # construir right_dp
+    #   construir el caso de tamaño uno
+    right_dp = [[]]
+    for i in range(m):
+        if S[0] == T[((len(T) - 1) - m) + i]:
+            right_dp[0].append(2)
+        else:
+            right_dp[0].append(0)
+    #   construir el resto de casos
+    for l in range(2,m + 1):
+        right_dp.append([])
+        for pos in range(m - (l - 1)):
+            current = 0
+            if S[l - 1] == T[((len(T) - 1) - m) + pos]:
+                current += right_dp[l -2][pos + 1]
+            if S[l - 1] == T[((len(T) - 1) - m) + (pos + (l - 1))]:
+                current += right_dp[l - 2][pos]
+            right_dp[l - 1].append(current)
+    #acumular las soluciones
+    result = 0
+    for i in range(m,-1,-1):
+        if S[i] == T[len(T) - 1]:
+            if i == 0:
+                result += left_dp[1][len(T) - 2]
+            elif i == (len(T) - 1):
+                result += right_dp[i - 1][m - i]*(len(S) - len(T) + 1)
+            else:
+                result += left_dp[i + 1][len(T) - i - 2]*right_dp[i - 1][m - i]
+    return result
+
+
+def optimal_solver(S, T) -> int:
+    result, left_dp = left_sol(S,T)
+    right = right_sol(S,T,left_dp)
+    return result + right, right > 0, result > 0
 ```
 
 #### Demostración Correctitud :
@@ -220,7 +351,7 @@ zero_rat: 0.7223340040241448
 dcha_accuracy: 1.0
 ```
 
-Se puede notar que la probabilidad de que algun caso tenga soluciones contadas por el método right_sol es de un 14 porciento por lo que aún generando 3000 casos solo se están probando 441. Por lo que nos propusimos implemantar un generador de casos también aleatorio para aumentar esta probabilidad. Para esto nos intentamos forzar que se cumpla una condición necesaria para que exista alguna solución de las que cuenta right_sol que es que exista algún carater del prefijo de tamaño |T| de S igual T[|T| - 1] y que todo lo que está detras sea una permutación del sufijo de misma longitud en |T|
+Se puede notar que la probabilidad de que algun caso tenga soluciones contadas por el método right_sol es de un 14 porciento por lo que aún generando 3000 casos solo se están probando 441. Por lo que nos propusimos implementar un generador de casos también aleatorio para aumentar esta probabilidad. Para esto nos intentamos forzar que se cumpla una condición necesaria para que exista alguna solución de las que cuenta right_sol que es que exista algún carater del prefijo de tamaño |T| de S igual T[|T| - 1] y que todo lo que está detras sea una permutación del sufijo de misma longitud en |T|
 
 ```console
 SUMARY:
