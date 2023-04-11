@@ -257,11 +257,11 @@ Sea una solución en la que al menos una de las primeras $|T|$ letras de $A$ fue
   
   - Con el prefijo hasta el índice $q$ de $S$ se decide el sufijo de tamaño $q + 1$ del prefijo de tamaño $|T|$ en $A$
     
-    - **Demostración**: Al poner una letra con una decisión derecha todo lo que fue decidido en las letras anteriores a ella van a estar contiguos a ella y antes de ella. Como $S$[$q$] ocupa la posición $|T| - 1$ de $A$ antonces las $q$ letras anteriores tienen que ocupar las $q$ posiciones anteriores del prefijo
+    - **Demostración**: Al poner una letra con una decisión derecha todo lo que fue decidido en las letras anteriores a ella van a estar contiguos a ella y antes de ella. Como $S$[$q$] ocupa la posición $|T| - 1$ de $A$ entonces las $q$ letras anteriores a $S$[$q$] en $S$ tienen que ocupar las $q$ posiciones anteriores de $|T| - 1$ en $A$ 
   
-  - El prefijo en $A$ hasta el índice $|T| - q - 2$ es calculado solo con izquierdas con $S$[$q + 1$:]
+  - El prefijo en $A$ hasta el índice $|T| - q - 2$ es calculado solo con izquierdas decididas en  $S$[$q + 1$:]
     
-    - **Demostración**: $S$[$q$] fué la última letra con la que se tomó decisión derecha que ocupa una posición en el prefijo de tamaño $|T|$ en $A$ por lo que todas derechas seleccionadas en los índices de mayores que $q$, no caen en el prefijo de tamaño $|T|$. Con lo que está antes de $q$ en $S$ solo se construye el sufijo de tamaño $q + 1$ del prefijo $|T|$. Por lo que necesariamente  ese prefijo de $A$ se tiene que calcular con decisiones izquierdas en las posiciones mayores o iguales a $q + 1$
+    - **Demostración**: $S$[$q$] fué la última letra con la que se tomó decisión derecha que ocupa una posición en el prefijo de tamaño $|T|$ en $A$ por lo que todas derechas seleccionadas en los índices de mayores que $q$, no caen en el prefijo de tamaño $|T|$. Con lo que está antes de $S$[$q$] en $S$ solo se construye el sufijo de tamaño $q + 1$ del prefijo $|T|$. Por lo que necesariamente  ese prefijo de $A$ se tiene que calcular con decisiones izquierdas en las posiciones mayores o iguales a $q + 1$
 
 - Vamos a definir a right_dp[pos,len] como cantidad de formas de decidir para construir el substring(pos,len) de $T$ con el prefijo de tamaño 'len' de $S$
   
@@ -275,7 +275,7 @@ Sea una solución en la que al menos una de las primeras $|T|$ letras de $A$ fue
     
     - **Demostración**: Supongamos que se tiene que construir con el prefijo de tamaño 'len' de $S$ el substring(pos,len) de $T$, si analizan las decisiones de atrás para alante y se toma una decisión derecha con la última letra esta va a caer en la última posición del substring a construir (todas las derechas van después que las izquierdas y mantienen el orden donde se ponen) por lo que quedaría por decidir el substring(pos,len - 1) de $A$ con el prefijo del tamaño len - 1 de $S$  lo cual tiene right_dp[pos, len - 1] formas de hacerse por definición, con la misma lógica se puede llegar a que si se toma la decisión izquierda con la última letra se tienen right_dp[pos + 1, len - 1]
 
-Los valores de right_dp se pueden ir resolviendo calculando los casos para len = 1 e ir creciendo hasta len igual $|T|$ pues todos los casos, excepto el de len = 1 que es 2 si $S$[len] $=$ $T$[pos] y $0$ en otro caso, dependen del casos con su len - 1
+Los valores de right_dp se pueden ir resolviendo calculando los casos para len = 1 e ir creciendo hasta len igual $|T|$ pues todos los casos, excepto el de len = 1 (que es 2 si $S$[len] $=$ $T$[pos] y $0$ en otro caso), dependen del casos con su len - 1
 
 #### Demostración Complejidad Temporal :
 
