@@ -124,7 +124,7 @@ def left_sol(S,T):
             if S[i] == T[0]:
                 result += (2**i)*(len(S) - i)
         return result, None
-    
+
     # array auxiliar pa no poner el if para la primera iteración
     result = [[0]*len(T)]
     # resolviendo de cuantas formas se puede construir el prefijo hasta
@@ -221,27 +221,29 @@ Para resolver este problema vamos a seguir las siguientes ideas:
 
 Para la solución de este problema vamos a utilizar la siguiente definición:
 
-* left_dp[$s$,$p$]: cantidad de formas de decidir en $S$[s:] de forma tal que solo hayan $p + 1$ decisiones izquierdas y el reverso de la concatenación de las letras que fueron izquierda sean el prefijo de $T$ desde $0$ hasta $p$
+* left_dp[$s$,$p$]: cantidad de formas de decidir en $S$[s:] de forma tal que solo hayan $p + 1$ decisiones izquierdas y el reverso de la concatenación de las letras que fueron izquierda sea igual al prefijo de $T$ desde $0$ hasta $p$
 
 Esta cantidad cumple las siguintes propiedades
 
-* $S$[$s$] $\neq$ $T$[$p$] $\Rightarrow$ left_dp[$s$,$p$] $=$ left_dp[$s + 1$, $p$]
+* left_dp[$s$,$p$] $=$ left_dp[$s + 1$, $p$] + $\alpha$
   
-  - **Demostración**: La decision tomada en $s$ tiene que ser derecha, porque en caso contrario para que el inverso de su concatenación con los $p$ restantes sea igual al prefijo de 0 a $p$ de $T$ se debería cumplir que $T$[$p$] $=$ $S$[$s$]
-
-* $S$[$s$] $=$ $T$[$p$] $\Rightarrow$ left_dp[$s$,$p$] $=$ left_dp[$s + 1$, $p$] + $\alpha$
+  - La cantidad de secuencias de decisiones en las que se decide derecha con S[s] se cuentan con left_dp[$s + 1,p$] y la cantidad de secuencias en las que se decide izquierda con $S$[$s$] se cuentan con $\alpha$
   
   - **Demostración**: Si se decide derecha con $S$[$s$] se puede y se tiene que poner en el resto cualquiera de las soluciones de $S$[$s + 1$:] con $p + 1$ decisiones izquierdas
   
+  - $S$[$s$] $\neq$ $T$[$p$] $\Rightarrow$ $\alpha = 0$
+    
+    - **Demostración**:La decision tomada en s tiene que ser derecha, porque en caso contrario para que el inverso de su concatenación con los p restantes sea igual al prefijo de 0 a p de T se debería cumplir que $T$[$p$] $=$ $S$[$s$]. Por lo que en este caso no hay soluciones en las que se tome izquierda con $S$[$s$]
+  
   - $p = 0 \Rightarrow \alpha =$ $|S| - s$
     
-    - **Demostración**: Si se decide izquierda con $S$[$s$], ya se consumió las izquierdas que se pueden poner en las formas de decidir que se están contando con left_dp[$s$,$0$] por lo que el resto solo puede ser uno y las últimas decisiones se puede decidir ponerlas o no
+    - **Demostración**: Si se decide izquierda con $S$[$s$], ya se consumió las izquierdas que se pueden poner en las formas de decidir que se están contando con left_dp[$s$,$0$] por lo que el resto solo puede ser uno y las últimas decisiones se puede decidir ponerlas o no.
   
   - $e.o.c \Rightarrow $ $\alpha = $ left_dp[$s + 1$,$p -1$]
     
     - **Demostración**: Si se decide izquierda con $S$[$s$], faltan por consumir $p$ decisiones izquierdas con $S$[$s + 1$:] y esta es exactamente la cantidad que se calcula con left_dp[$s + 1$,$p - 1$]
 
-Luego si $S[s] = T[|T| - 1]$ la cantidad de soluciones de esta partición que tienen a $S[s]$ en la posición $|T| - 1$ de $A$ es igual a $2^s$left_dp[$s + 1$,$p - 1$],pues, al escoger a $S[s]$ como primera de los $|T|$ últimas decisiones izquierdas, las $s$ primeras decisiones no afectan el prefijo por lo que pueden ser cualquiera de las $2^s$ posibles formas y las decisiones desde $s + 1$ en adelante tienen que formar el prefijo de $0$ a $p -1$ las cuales son left_dp[$s + 1$,$p - 1$]. Luego la cantidad de soluciones de esta partición se puede calcular acumulando este valor para toda  $s$ que cumpla $S[s] = T[|T| - 1]$, y esta se puede calcular usando un enfoque de programación dinámica recorriendo $S$ de atrás para alante y actualizando los valores de left_dp[$s$,$p$] para todo $p$ de $0$ a $|T|$ y acumulando en la posición left_dp[$s$,$|T| - 1$] las soluciónes tal que $s$ sea la primera de las $|T|$ últimas izquierdas
+Luego si $S[s] = T[|T| - 1]$ la cantidad de soluciones de esta partición que tienen a $S[s]$ en la posición $|T| - 1$ de $A$ es igual a $2^s$left_dp[$s + 1$,$p - 1$],pues, al escoger a $S[s]$ como primera de los $|T|$ últimas decisiones izquierdas, las $s$ primeras decisiones no afectan el prefijo por lo que pueden ser cualquiera de las $2^s$ posibles formas y las decisiones desde $s + 1$ en adelante tienen que formar el prefijo de $0$ a $p -1$ las cuales son left_dp[$s + 1$,$p - 1$]. Luego la cantidad de soluciones de esta partición se puede calcular acumulando este valor para toda  $s$ que cumpla $S[s] = T[|T| - 1]$, y el left_dp[$s + 1,p - 1$] se puede calcular usando un enfoque de programación dinámica recorriendo $S$ de atrás para alante y actualizando los valores de left_dp[$s$,$p$] para todo $p$ de $0$ a $|T|$. Se puede reutilizar  la posición left_dp[$s$,$|T| - 1$]  para acumular las soluciónes tal que $s$ sea la primera de las $|T|$ últimas izquierdas
 
 ### Calculando la cantidad de soluciones de la partición 2:
 
